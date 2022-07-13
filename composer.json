@@ -1,8 +1,9 @@
 {
     "name": "xjr-middle/mqtt-sdk",
     "description": "middle conn",
+    "homepage": "https://github.com/lhsdepos",
+    "license": "MIT",
     "type": "library",
-    "license": "lhs",
     "autoload": {
         "psr-4": {
             "XjrMiddle\\MqttSdk\\": "src/"
@@ -11,6 +12,7 @@
     "authors": [
         {
             "name": "qq873913600",
+            "homepage": "https://github.com/lhsdepos",
             "email": "873913600@qq.com"
         }
     ],
