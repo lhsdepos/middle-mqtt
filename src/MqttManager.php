@@ -1,16 +1,17 @@
 <?php
-namespace xjr\src\mqtt;
+namespace XjrMiddle\MqttSdk;
 /**
- * 
+ * 新捷睿智能柜专用
  */
 class MqttManager
 {
 
-	const APPID  = '';
-	const APP_SECRET = '';
+	
 
 	const DOMAIN_URL = 'http://api.newgearing.com/drop'; //域名
-
+    
+    private static $APPID  = '';
+	private static $APP_SECRET = '';
 
 	private static $publishUrl = self::DOMAIN_URL."/mqtt/v1/publish";//消息发布
 	private static $getDevUrl = self::DOMAIN_URL."/mqtt/v1/getDevList";//查询设备
@@ -28,9 +29,9 @@ class MqttManager
      */
     public static function init($appId,$appSecret)
     {
-    	 self::APPID = $appId;
-    	 self::APP_SECRET = $appSecret;
-    	 return self;
+    	 self::$APPID = $appId;
+    	 self::$APP_SECRET = $appSecret;
+    	 return new MqttManager();
     }
 
     /**
@@ -118,7 +119,7 @@ class MqttManager
      */
     private static function baseRequert($url,$param)
     {
-    	 $param['appId'] = self::APPID;
+    	 $param['appId'] = self::$APPID;
     	 $param['time'] = time();
     	 $param['sign'] = self::MakeSign($param);
     	 return self::mqtt_http_post($url,$param);
@@ -135,7 +136,7 @@ class MqttManager
     	$param = self::dataFilter($param);
     	$param = self::argSort($param);
     	$paramStr = self::createLinkstring($param);
-    	$paramStr .= "&appSecret=".self::APP_SECRET;
+    	$paramStr .= "&appSecret=".self::$APP_SECRET;
     	return md5($paramStr);
     }
 
@@ -247,9 +248,6 @@ class MqttManager
 	    curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
 	    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 	    $response = curl_exec($curl);
-	    // $headerSize = curl_getinfo($curl);
-	      //$header = substr($response, 0, $headerSize);
-	    //  var_dump($headerSize);die;
 	    curl_close($curl);
 	    $response = json_decode($response, true);
 	    return $response;
