@@ -1,7 +1,36 @@
-# middle-mqtt
 #设备通信接口
 [TOC]
+# sdk使用演示
+>php接入sdk
 
+```
+composer require xjr-middle/mqtt-sdk
+```
+>使用demo
+
+```
+<?php
+use XjrMiddle\MqttSdk\MqttManager;
+//消息推送
+public function publish($payload,$clientid){
+    $app = MqttManager::init("你的APPID","你的APP_SECRET");
+	$sendData = ['id'=>$clientid,'payload'=>json_encode($payload)];
+	return $app::publish($sendData);
+}
+//添加设备
+public  function addDev($device_id)
+{
+  $app = MqttManager::init("你的APPID","你的APP_SECRET");
+  return $app::addDev(['DeviceId'=>$device_id]);
+}
+```
+
+# 自定义对接
+####接口域名
+
+```
+http://api.newgearing.com/drop/
+```
 #### 公共参数
 |字段|类型|空|注释|
 |:----    |:-------    |:--- |--     |
@@ -52,7 +81,7 @@ sign = md5(stringSignTemp)
 |:----    |:---|:----- |-----   |
 |appId |是  |string |用户标识   |
 |sign |是  |string | 签名    |
-|queryTime     |否  |string | 请求时间    |
+|time     |否  |string | 请求时间    |
 
 >  返回示例 
 ``` 
@@ -252,3 +281,14 @@ sign = md5(stringSignTemp)
 	"msg": "签名错误/设备不在线"
 }
 ```
+
+
+
+#回调地址配置
+
+>服务器地址说明
+用于接收设备请求，如果需要自行实现后台业务逻辑，请配置自己的业务接口，具体对接文档，请根据设备类型，向软件方索要。
+
+>通用回调事件
+onDeviceStatus
+用于实时监听设备在线状态，当设备离线或者上线时，设备会向回调地址推送该事件，可以实现该事件更新设备状态
