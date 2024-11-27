@@ -13,14 +13,14 @@ composer require xjr-middle/mqtt-sdk
 use XjrMiddle\MqttSdk\MqttManager;
 //消息推送
 public function publish($payload,$clientid){
-    $app = MqttManager::init("你的APPID","你的APP_SECRET");
+    $app = MqttManager::init("你的APPID","你的APP_SECRET","中间件地址");
 	$sendData = ['id'=>$clientid,'payload'=>json_encode($payload)];
 	return $app::publish($sendData);
 }
 //添加设备
 public  function addDev($device_id)
 {
-  $app = MqttManager::init("你的APPID","你的APP_SECRET");
+  $app = MqttManager::init("你的APPID","你的APP_SECRET","中间件地址");
   return $app::addDev(['DeviceId'=>$device_id]);
 }
 ```
@@ -29,7 +29,7 @@ public  function addDev($device_id)
 ####接口域名
 
 ```
-http://api.newgearing.com/drop/
+http://api.guangeiot.com/drop/
 ```
 #### 公共参数
 |字段|类型|空|注释|

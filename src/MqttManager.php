@@ -6,18 +6,17 @@ namespace XjrMiddle\MqttSdk;
 class MqttManager
 {
 
-	
-
-	const DOMAIN_URL = 'http://api.newgearing.com/drop'; //域名
-    
+	private static $instance = null;
+    private static $BASE_URL  = 'http://api.guangeiot.com/drop';
     private static $APPID  = '';
 	private static $APP_SECRET = '';
 
-	private static $publishUrl = self::DOMAIN_URL."/mqtt/v1/publish";//消息发布
-	private static $getDevUrl = self::DOMAIN_URL."/mqtt/v1/getDevList";//查询设备
-	private static $getTypeUrl = self::DOMAIN_URL."/mqtt/v1/getTypeList";//查询设备类型
-	private static $addDevUrl = self::DOMAIN_URL."/mqtt/v1/addDev";//添加设备
-	private static $delDevsUrl = self::DOMAIN_URL."/mqtt/v1/delDevs";//删除设备
+	private static $publishUrl = "/mqtt/v1/publish";//消息发布
+	private static $publishSyncUrl = "/mqtt/v1/publishSync";//异步消息发布
+	private static $getDevUrl = "/mqtt/v1/getDevList";//查询设备
+	private static $getTypeUrl = "/mqtt/v1/getTypeList";//查询设备类型
+	private static $addDevUrl = "/mqtt/v1/addDev";//添加设备
+	private static $delDevsUrl = "/mqtt/v1/delDevs";//删除设备
    
     /**
      * [init 初始化配置]
@@ -27,11 +26,15 @@ class MqttManager
      * @param    [type]                   $appSecret [description]
      * @return   [type]                              [description]
      */
-    public static function init($appId,$appSecret)
+    public static function init($appId,$appSecret,$baseUrl='')
     {
-    	 self::$APPID = $appId;
-    	 self::$APP_SECRET = $appSecret;
-    	 return new MqttManager();
+    	if(self::$instance === null) {
+    		self::$APPID = $appId;
+	    	self::$APP_SECRET = $appSecret;
+	    	if(!empty($baseUrl))  self::$BASE_URL = $baseUrl;
+            self::$instance = new self();
+         }
+    	 return self::$instance;
     }
 
     /**
@@ -44,6 +47,18 @@ class MqttManager
     public static function publish($param = [])
     {
     	return self::baseRequert(self::$publishUrl,$param);
+    }
+
+    /**
+     * [publish 消息推送]
+     * @Author   lhs
+     * @DateTime 2022-07-09T11:32:10+0800
+     * @param    array                    $param [description]
+     * @return   [type]                          [description]
+     */
+    public static function publishSync($param = [])
+    {
+    	return self::baseRequert(self::$publishSyncUrl,$param);
     }
     
     /**
@@ -117,12 +132,12 @@ class MqttManager
      * @param    [type]                   $param [description]
      * @return   [type]                          [description]
      */
-    private static function baseRequert($url,$param)
+    private static function baseRequert($uri,$param)
     {
     	 $param['appId'] = self::$APPID;
     	 $param['time'] = time();
     	 $param['sign'] = self::MakeSign($param);
-    	 return self::mqtt_http_post($url,$param);
+    	 return self::mqtt_http_post($uri,$param);
     }
     
     /**
@@ -192,8 +207,9 @@ class MqttManager
 	 *
 	 * @return array
 	 */
-	private static function mqtt_http_get($url,  $param = [],$header = [])
+	private static function mqtt_http_get($uri,  $param = [],$header = [])
 	{
+		$url = self::$BASE_URL.$uri;
 	    if (empty($header)) {
 	        $header = [
 	            "Content-type:application/x-www-form-urlencoded;",
@@ -228,9 +244,9 @@ class MqttManager
 	 *
 	 * @return array
 	 */
-	private static function mqtt_http_post($url, $param = [], $header = [])
+	private static function mqtt_http_post($uri, $param = [], $header = [])
 	{
-
+        $url = self::$BASE_URL.$uri;
 	    if (empty($header)) {
 	        $header = [
 	            "Content-type:application/x-www-form-urlencoded;charset='utf-8'",
