@@ -1,12 +1,13 @@
 <?php
 namespace XjrMiddle\MqttSdk;
 /**
- * 新捷睿智能柜专用
+ * 万度智能柜专用
  */
 class MqttManager
 {
 
 	private static $instance = null;
+
     private static $BASE_URL  = 'http://api.guangeiot.com/drop';
     private static $APPID  = '';
 	private static $APP_SECRET = '';
